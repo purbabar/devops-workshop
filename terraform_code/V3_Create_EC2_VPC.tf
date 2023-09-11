@@ -29,12 +29,17 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 resource "aws_instance" "demo-server" {
-    ami = "ami-01c647eace872fc02"
+    ami = "ami-053b0d53c279acc90"
     instance_type = "t2.micro"
     key_name = "dpp"
     //security_groups = [ "allow_ssh" ]
     vpc_security_group_ids = [ aws_security_group.allow_ssh.id ]
     subnet_id = aws_subnet.dpp-public_subnet_01.id
+    for_each = toset(["jenkins-master", "build-slave", "ansible"])
+
+    tags = {
+        Name = "${each.key}"
+    }
 }
 
 
